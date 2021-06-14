@@ -1,12 +1,28 @@
 package timicasto.pcl;
 
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SVGOMDocument;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.dom.svg.SVGDocumentFactory;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.renderer.ConcreteImageRendererFactory;
+import org.apache.batik.gvt.renderer.ImageRenderer;
+import org.apache.batik.gvt.renderer.ImageRendererFactory;
+import org.apache.batik.util.gui.xmleditor.XMLDocument;
+import org.w3c.dom.Document;
+import org.w3c.dom.svg.SVGDocument;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +34,7 @@ import java.util.logging.XMLFormatter;
 public class Main {
     public static long startTime;
     public static final Logger startupLogger = Logger.getLogger("startup");
+    public static final long ANIMATION_LENGTH = 333;
 
     public static void main(String[] args) throws IOException {
         startup();
@@ -28,7 +45,7 @@ public class Main {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         File current = new File("./");
         if (!current.canWrite()) {
-            startupLogger.severe("PCL2 Ê≤°ÊúâÂØπÂΩìÂâçÁõÆÂΩïÁöÑÂÜôÂÖ•ÊùÉÔºåÁ®ãÂ∫èÂ∞ÜÈÄÄÂá∫");
+            startupLogger.severe("PCL2 √ª”–∂‘µ±«∞ƒø¬ºµƒ–¥»Î»®£¨≥Ã–ÚΩ´ÕÀ≥ˆ");
             System.exit(4);
         }
         File pcl = new File("./PCL");
@@ -38,7 +55,7 @@ public class Main {
         handler.setFormatter(new SimpleFormatter());
         startupLogger.addHandler(handler);
         if (!pcl.canWrite()) {
-            startupLogger.severe("PCL2 Ê≤°ÊúâÂØπPCLÁõÆÂΩïÁöÑÂÜôÂÖ•ÊùÉÔºåÁ®ãÂ∫èÂ∞ÜÈÄÄÂá∫");
+            startupLogger.severe("PCL2 √ª”–∂‘PCLƒø¬ºµƒ–¥»Î»®£¨≥Ã–ÚΩ´ÕÀ≥ˆ");
         }
         File musics = new File("./PCL/Musics");
         musics.mkdir();
@@ -47,7 +64,7 @@ public class Main {
         File temp = new File("./PCL/Temp");
         temp.mkdir();
         if (!temp.canWrite()) {
-            startupLogger.severe("PCL2 Ê≤°ÊúâÂØπÁºìÂ≠òÁõÆÂΩïÁöÑÂÜôÂÖ•ÊùÉÔºåÁ®ãÂ∫èÂ∞ÜÈÄÄÂá∫");
+            startupLogger.severe("PCL2 √ª”–∂‘ª∫¥Êƒø¬ºµƒ–¥»Î»®£¨≥Ã–ÚΩ´ÕÀ≥ˆ");
             System.exit(4);
         }
         File download = new File("./PCL/Temp/Download");
@@ -78,7 +95,22 @@ public class Main {
         main.setLayout(null);
         JCheckBox c1 = new JCheckBox("Checkbox");
         c1.setBounds(33, 55, 210, 30);
+        c1.setIcon(new ImageIcon(genCheckBoxIcon(false)));
         main.add(c1);
+        c1.addItemListener(e ->  {
+            // TODO Animation
+            /*c1.setIcon(c1.isSelected() ? new ImageIcon(genCheckBoxIcon(true)) : new ImageIcon(genCheckBoxIcon(false)));
+            ((Runnable) () -> {
+                long time = System.currentTimeMillis();
+                while (time < ANIMATION_LENGTH) {
+                    long tempTime = System.currentTimeMillis();
+                    if (tempTime != time) {
+                        time = tempTime;
+
+                    }
+                }
+            }).run();*/
+        });
         c1.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -105,22 +137,139 @@ public class Main {
                 c1.setForeground(new Color(0));
             }
         });
-        JCheckBox c2 = new JCheckBox();
+        JCheckBox c2 = new JCheckBox("Checkbox");
         c2.setBounds(33, 85, 198, 25);
+        c2.setIcon(new ImageIcon(genCheckBoxIcon(false)));
         main.add(c2);
-        JCheckBox c3 = new JCheckBox();
+        c2.addItemListener(e -> {
+            c2.setIcon(c2.isSelected() ? new ImageIcon(genCheckBoxIcon(true)) : new ImageIcon(genCheckBoxIcon(false)));
+
+        });
+        c2.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                c2.setForeground(new Color(0x2271FF));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                c2.setForeground(new Color(0));
+            }
+        });
+        JCheckBox c3 = new JCheckBox("Checkbox");
         c3.setBounds(33, 115, 198, 30);
+        c3.setIcon(new ImageIcon(genCheckBoxIcon(false)));
         main.add(c3);
+        c3.addItemListener(e -> c3.setIcon(c3.isSelected() ? new ImageIcon(genCheckBoxIcon(true)) : new ImageIcon(genCheckBoxIcon(false))));
+        c3.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                c3.setForeground(new Color(0x2271FF));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                c3.setForeground(new Color(0));
+            }
+        });
         JButton btnX = new JButton("x");
         btnX.setBounds(580, 40, 60, 60);
         main.add(btnX);
         btnX.addActionListener(e -> System.exit(0));
-        JLabel label = new JLabel("Â§ßÊ¶ÇÔºåÂè™ËÉΩÂãæÂ§çÈÄâÊ°ÜÁé©......");
+        JLabel label = new JLabel("¥Û∏≈£¨÷ªƒ‹π¥∏¥—°øÚÕÊ......");
         label.setBounds(171, 262, 403, 104);
-        label.setFont(new Font("ÂæÆËΩØÈõÖÈªë", Font.PLAIN, 12));
+        label.setFont(new Font("Œ¢»Ì—≈∫⁄", Font.PLAIN, 12));
         main.add(label);
         startup.dispose();
+        c1.setBackground(new Color(0xFFFFFF));
+        c2.setBackground(new Color(0xFFFFFF));
+        c3.setBackground(new Color(0xFFFFFF));
         main.setVisible(true);
+        main.getContentPane().setBackground(new Color(0xFFFFFF));
         startup.setVisible(false);
+    }
+
+    public static BufferedImage genCheckBoxIcon(boolean isSelected) {
+        BufferedImage ret = new BufferedImage(18, 18, BufferedImage.TYPE_INT_ARGB);
+        if (!isSelected) {
+            Graphics2D g = ret.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(new Color(71, 71, 71));
+            g.fill(new RoundRectangle2D.Float(0, 0, 18, 18, 4, 4));
+            g.setColor(new Color(0xffffff));
+            g.fill(new Rectangle2D.Float(2, 2, 14, 14));
+            g.dispose();
+        } else {
+            Graphics2D g = ret.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(new Color(0x2271FF));
+            g.fill(new RoundRectangle2D.Float(0, 0, 18, 18, 4, 4));
+            g.setColor(new Color(0xffffff));
+            g.fill(new Rectangle2D.Float(2, 2, 14, 14));
+            g.setColor(new Color(0x2271FF));
+            g.drawImage(renderCheckBox(), 3, 3, null);
+            g.dispose();
+        }
+        return ret;
+    }
+
+    public static BufferedImage renderCheckBox() {
+        ImageRendererFactory factory;
+        factory = new ConcreteImageRendererFactory();
+        ImageRenderer renderer = factory.createStaticImageRenderer();
+        GVTBuilder builder = new GVTBuilder();
+        BridgeContext ctx = new BridgeContext(new UserAgentAdapter());
+        ctx.setDynamicState(BridgeContext.STATIC);
+        SVGDocument document = null;
+        try {
+            document = new SAXSVGDocumentFactory("org.apache.xerces.parsers.SAXParser").createSVGDocument("./PCL/Checkbox.svg");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        GraphicsNode root = builder.build(ctx, document);
+        renderer.setTree(root);
+        float docWidth = (float)ctx.getDocumentSize().getWidth();
+        float docHeight = (float) ctx.getDocumentSize().getHeight();
+        float xScale = 12 / docWidth;
+        float yScale = 12 / docHeight;
+        AffineTransform px = AffineTransform.getScaleInstance(xScale, yScale);
+        double tx = -0 + (12 / xScale - docWidth) / 2;
+        double ty = -0 + (12 / yScale - docHeight) / 2;
+        px.translate(tx, ty);
+        renderer.updateOffScreen(12, 12);
+        renderer.setTree(root);
+        renderer.setTransform(px);
+        renderer.repaint(new Rectangle(0, 0, 12, 12));
+        return renderer.getOffScreen();
     }
 }
